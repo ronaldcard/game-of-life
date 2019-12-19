@@ -1,6 +1,6 @@
 # Game of Life
 Conway's Game of Life Kata in Kotlin
-https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+[Game of Life - Wikipedia](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
 
 ## Rules
 Any live cell with fewer than two live neighbours dies, as if by underpopulation.
