@@ -32,4 +32,20 @@ class GameOfLifeTests {
 
         assertThat(cell.isAlive(threeLiveNeighbors)).isTrue()
     }
+
+    @Test
+    fun `live cell with more than 3 live neighbors, will die`() {
+        val cell = Cell(status = CellStatus.ALIVE)
+
+        val neighbors = Neighbors(
+                top = Cell(status = CellStatus.ALIVE),
+                topRight = Cell(status = CellStatus.ALIVE),
+                left = Cell(status = CellStatus.ALIVE),
+                bottomRight = Cell(status = CellStatus.ALIVE)
+        )
+
+        assertThat(cell.isAlive(neighbors)).isFalse()
+    }
+
+
 }
