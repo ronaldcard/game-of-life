@@ -47,5 +47,16 @@ class GameOfLifeTests {
         assertThat(GameWarden.cellLives(cell, neighbors)).isFalse()
     }
 
+    @Test
+    fun `dead cell with exactly 3 live neighbors, will resurrect`() {
+        val cell = Cell(status = CellStatus.DEAD)
 
+        val neighbors = Neighbors(
+                top = Cell(status = CellStatus.ALIVE),
+                left = Cell(status = CellStatus.ALIVE),
+                bottomRight = Cell(status = CellStatus.ALIVE)
+        )
+
+        assertThat(GameWarden.cellLives(cell, neighbors)).isTrue();
+    }
 }
