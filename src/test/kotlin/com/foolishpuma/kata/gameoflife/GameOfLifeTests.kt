@@ -10,7 +10,7 @@ class GameOfLifeTests {
         val cell = Cell(status = CellStatus.ALIVE)
         val neighbors = Neighbors()
 
-        assertThat(cell.isAlive(neighbors)).isFalse()
+        assertThat(GameWarden.cellLives(cell, neighbors)).isFalse()
     }
 
     @Test
@@ -22,7 +22,7 @@ class GameOfLifeTests {
                 left = Cell(status = CellStatus.ALIVE)
         )
 
-        assertThat(cell.isAlive(twoLiveNeighbors)).isTrue()
+        assertThat(GameWarden.cellLives(cell, twoLiveNeighbors)).isTrue()
 
         val threeLiveNeighbors = Neighbors(
                 top = Cell(status = CellStatus.ALIVE),
@@ -30,7 +30,7 @@ class GameOfLifeTests {
                 bottomRight = Cell(status = CellStatus.ALIVE)
         )
 
-        assertThat(cell.isAlive(threeLiveNeighbors)).isTrue()
+        assertThat(GameWarden.cellLives(cell, threeLiveNeighbors)).isTrue()
     }
 
     @Test
@@ -44,7 +44,7 @@ class GameOfLifeTests {
                 bottomRight = Cell(status = CellStatus.ALIVE)
         )
 
-        assertThat(cell.isAlive(neighbors)).isFalse()
+        assertThat(GameWarden.cellLives(cell, neighbors)).isFalse()
     }
 
 
