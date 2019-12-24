@@ -5,58 +5,86 @@ import org.junit.Test
 
 class GameOfLifeTests {
 
-    @Test
-    fun `live cell with less than 2 live neighbors, will die`() {
-        val cell = Cell(status = CellStatus.ALIVE)
-        val neighbors = Neighbors()
+    class RulesTests {
+        @Test
+        fun `live cell with less than 2 live neighbors, will die`() {
+            val cell = Cell(status = CellStatus.ALIVE)
+            val neighbors = Neighbors()
 
-        assertThat(GameWarden.cellLives(cell, neighbors)).isFalse()
+            assertThat(cell.cellLives(neighbors)).isFalse()
+        }
+
+        @Test
+        fun `live cell with 2 or 3 live neighbors, will live`() {
+            val cell = Cell(status = CellStatus.ALIVE)
+
+            val twoLiveNeighbors = Neighbors(
+                    top = Cell(status = CellStatus.ALIVE),
+                    left = Cell(status = CellStatus.ALIVE)
+            )
+
+            assertThat(cell.cellLives(twoLiveNeighbors)).isTrue()
+
+            val threeLiveNeighbors = Neighbors(
+                    top = Cell(status = CellStatus.ALIVE),
+                    left = Cell(status = CellStatus.ALIVE),
+                    bottomRight = Cell(status = CellStatus.ALIVE)
+            )
+
+            assertThat(cell.cellLives(threeLiveNeighbors)).isTrue()
+        }
+
+        @Test
+        fun `live cell with more than 3 live neighbors, will die`() {
+            val cell = Cell(status = CellStatus.ALIVE)
+
+            val neighbors = Neighbors(
+                    top = Cell(status = CellStatus.ALIVE),
+                    topRight = Cell(status = CellStatus.ALIVE),
+                    left = Cell(status = CellStatus.ALIVE),
+                    bottomRight = Cell(status = CellStatus.ALIVE)
+            )
+
+            assertThat(cell.cellLives(neighbors)).isFalse()
+        }
+
+        @Test
+        fun `dead cell with exactly 3 live neighbors, will resurrect`() {
+            val cell = Cell(status = CellStatus.DEAD)
+
+            val neighbors = Neighbors(
+                    top = Cell(status = CellStatus.ALIVE),
+                    left = Cell(status = CellStatus.ALIVE),
+                    bottomRight = Cell(status = CellStatus.ALIVE)
+            )
+
+            assertThat(cell.cellLives(neighbors)).isTrue();
+        }
     }
 
-    @Test
-    fun `live cell with 2 or 3 live neighbors, will live`() {
-        val cell = Cell(status = CellStatus.ALIVE)
+    class SimulationTests {
 
-        val twoLiveNeighbors = Neighbors(
-                top = Cell(status = CellStatus.ALIVE),
-                left = Cell(status = CellStatus.ALIVE)
-        )
+        @Test
+        fun doSomething() {
 
-        assertThat(GameWarden.cellLives(cell, twoLiveNeighbors)).isTrue()
+            val seedWorld =
+                    arrayOf(arrayOf(liveCell(), deadCell()),
+                            arrayOf(deadCell(), liveCell()))
 
-        val threeLiveNeighbors = Neighbors(
-                top = Cell(status = CellStatus.ALIVE),
-                left = Cell(status = CellStatus.ALIVE),
-                bottomRight = Cell(status = CellStatus.ALIVE)
-        )
+            val warden = GameWarden(1, seedWorld)
 
-        assertThat(GameWarden.cellLives(cell, threeLiveNeighbors)).isTrue()
+            val world = warden.simulate()
+            for (rowIndex in world.indices) {
+                for (columnIndex in world[rowIndex].indices) {
+                    println("[${rowIndex}][${columnIndex}][${world[rowIndex][columnIndex]}")
+                }
+            }
+
+            val expectedWorld =
+                    arrayOf(arrayOf(deadCell(), deadCell()),
+                            arrayOf(deadCell(), liveCell()))
+        }
     }
 
-    @Test
-    fun `live cell with more than 3 live neighbors, will die`() {
-        val cell = Cell(status = CellStatus.ALIVE)
 
-        val neighbors = Neighbors(
-                top = Cell(status = CellStatus.ALIVE),
-                topRight = Cell(status = CellStatus.ALIVE),
-                left = Cell(status = CellStatus.ALIVE),
-                bottomRight = Cell(status = CellStatus.ALIVE)
-        )
-
-        assertThat(GameWarden.cellLives(cell, neighbors)).isFalse()
-    }
-
-    @Test
-    fun `dead cell with exactly 3 live neighbors, will resurrect`() {
-        val cell = Cell(status = CellStatus.DEAD)
-
-        val neighbors = Neighbors(
-                top = Cell(status = CellStatus.ALIVE),
-                left = Cell(status = CellStatus.ALIVE),
-                bottomRight = Cell(status = CellStatus.ALIVE)
-        )
-
-        assertThat(GameWarden.cellLives(cell, neighbors)).isTrue();
-    }
 }
