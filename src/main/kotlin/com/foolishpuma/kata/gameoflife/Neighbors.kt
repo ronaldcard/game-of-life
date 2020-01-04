@@ -4,7 +4,8 @@ typealias Neighbors = Set<Neighbor>
 
 data class Neighbor(
         val position: NeighborPosition,
-        val cell: Cell)
+        val cell: Cell
+)
 
 enum class NeighborPosition {
     TOP_LEFT,
