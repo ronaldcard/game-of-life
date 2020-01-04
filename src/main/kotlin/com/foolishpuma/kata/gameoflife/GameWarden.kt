@@ -35,14 +35,29 @@ class GameWarden(private val world: World) {
 
         val neighbors = mutableSetOf<Neighbor>()
 
-        if (isNotFirstRow && isNotFirstColumn) addTopLeftNeighbor(world, position, neighbors)
-        if (isNotFirstRow) addTopNeighbor(world, position, neighbors)
-        if (isNotFirstRow && isNotLastColumn) addTopRightNeighbor(world, position, neighbors)
-        if (isNotFirstColumn) addLeftNeighbor(world, position, neighbors)
-        if (isNotLastColumn) addRightNeighbor(world, position, neighbors)
-        if (isNotLastRow && isNotFirstColumn) addBottomLeftNeighbor(world, position, neighbors)
-        if (isNotLastRow) addBottomNeighbor(world, position, neighbors)
-        if (isNotLastRow && isNotLastColumn) addBottomRightNeighbor(world, position, neighbors)
+        if (isNotFirstRow && isNotFirstColumn)
+            addTopLeftNeighbor(world, position, neighbors)
+
+        if (isNotFirstRow)
+            addTopNeighbor(world, position, neighbors)
+
+        if (isNotFirstRow && isNotLastColumn)
+            addTopRightNeighbor(world, position, neighbors)
+
+        if (isNotFirstColumn)
+            addLeftNeighbor(world, position, neighbors)
+
+        if (isNotLastColumn)
+            addRightNeighbor(world, position, neighbors)
+
+        if (isNotLastRow && isNotFirstColumn)
+            addBottomLeftNeighbor(world, position, neighbors)
+
+        if (isNotLastRow)
+            addBottomNeighbor(world, position, neighbors)
+
+        if (isNotLastRow && isNotLastColumn)
+            addBottomRightNeighbor(world, position, neighbors)
 
         return neighbors
     }

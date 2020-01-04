@@ -65,7 +65,7 @@ class GameOfLifeTests {
     class SimulationTests {
 
         @Test
-        fun doSomething() {
+        fun `2x3 seed world returns expected world`() {
 
             val seedWorld =
                     arrayOf(arrayOf(liveCell(), deadCell(), liveCell()),
