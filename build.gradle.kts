@@ -14,7 +14,7 @@ repositories {
 dependencies {
     implementation(kotlin(module = "stdlib-jdk8"))
     implementation(kotlin(module = "reflect"))
-    testImplementation(group = "junit", name = "junit")
+    testImplementation(group = "junit", name = "junit", version = "4.12")
     testImplementation(group = "org.assertj", name = "assertj-core", version = "3.+")
 }
 

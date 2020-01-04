@@ -1,22 +1,17 @@
 package com.foolishpuma.kata.gameoflife
 
-private const val NEIGHBOR_LIVE_CELL_MIN_COUNT = 2
-private const val NEIGHBOR_LIVE_CELL_MAX_COUNT = 3
+typealias World = Array<Array<Cell>>
 
-class GameWarden(
-        private val simulationIterations: Int,
-        private val world: Array<Array<Cell>>
-) {
+class GameWarden(private val world: World) {
 
-    fun simulate(): Array<Array<Cell>> {
-        val newWorld: Array<Array<Cell>> = world.clone()
+    fun simulate(): World {
+        val newWorld: World = Array(world.size) { Array(world[1].size) { liveCell() } }
 
         for (rowIndex in world.indices) {
             for (columnIndex in world[rowIndex].indices) {
                 val currentCell = world[rowIndex][columnIndex]
                 val neighbors = getNeighbors(world, WorldPosition(rowIndex, columnIndex))
                 val cellLives = currentCell.cellLives(neighbors)
-                println("cellLives [$cellLives]")
 
                 if (cellLives) {
                     newWorld[rowIndex][columnIndex] = liveCell()
@@ -29,57 +24,65 @@ class GameWarden(
         return newWorld
     }
 
-    private fun getNeighbors(world: Array<Array<Cell>>, position: WorldPosition): Neighbors {
+    private fun getNeighbors(world: World, position: WorldPosition): Neighbors {
 
+        val rowCount = world.size
+        val columnCount = world[1].size
         val isNotFirstRow = position.row > 0
-        val isNotLastRow = position.row < world.size - 1
+        val isNotLastRow = position.row < rowCount - 1
         val isNotFirstColumn = position.column > 0
-        val isNotLastColumn = position.column < world[1].size - 1
-        val neighbors = Neighbors()
+        val isNotLastColumn = position.column < columnCount - 1
 
-        // topLeft
-        if (isNotFirstRow && isNotFirstColumn) {
-            neighbors.topLeft = world[position.row - 1][position.column - 1]
-        }
+        val neighbors = mutableSetOf<Neighbor>()
 
-        // top
-        if (isNotFirstRow) {
-            neighbors.top = world[position.row - 1][position.column]
-        }
+        if (isNotFirstRow && isNotFirstColumn) addTopLeftNeighbor(world, position, neighbors)
+        if (isNotFirstRow) addTopNeighbor(world, position, neighbors)
+        if (isNotFirstRow && isNotLastColumn) addTopRightNeighbor(world, position, neighbors)
+        if (isNotFirstColumn) addLeftNeighbor(world, position, neighbors)
+        if (isNotLastColumn) addRightNeighbor(world, position, neighbors)
+        if (isNotLastRow && isNotFirstColumn) addBottomLeftNeighbor(world, position, neighbors)
+        if (isNotLastRow) addBottomNeighbor(world, position, neighbors)
+        if (isNotLastRow && isNotLastColumn) addBottomRightNeighbor(world, position, neighbors)
 
-        // topRight
-        if (isNotFirstRow && isNotLastColumn) {
-            neighbors.topRight = world[position.row - 1][position.column + 1]
-        }
-
-        // left
-        if (isNotFirstColumn) {
-            neighbors.left = world[position.row][position.column - 1]
-        }
-
-        // right
-        if (isNotLastColumn) {
-            neighbors.right = world[position.row][position.column + 1]
-        }
-
-        // bottomLeft
-        if (isNotLastRow && isNotFirstColumn) {
-            neighbors.bottomLeft = world[position.row + 1][position.column - 1]
-        }
-
-        // bottom
-        if (isNotLastRow) {
-            neighbors.bottom = world[position.row + 1][position.column]
-        }
-
-        // bottomRight
-        if (isNotLastRow && isNotLastColumn) {
-            neighbors.bottomRight = world[position.row + 1][position.column + 1]
-        }
-
-        println("[${position.row}][${position.column}] $neighbors")
         return neighbors
+    }
+
+    private fun addTopLeftNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.TOP_LEFT, world[position.top][position.left]))
+    }
+
+    private fun addTopNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.TOP, world[position.top][position.column]))
+    }
+
+    private fun addTopRightNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.TOP_RIGHT, world[position.top][position.right]))
+    }
+
+    private fun addLeftNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.LEFT, world[position.row][position.left]))
+    }
+
+    private fun addRightNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.RIGHT, world[position.row][position.right]))
+    }
+
+    private fun addBottomLeftNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.BOTTOM_LEFT, world[position.bottom][position.left]))
+    }
+
+    private fun addBottomNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.BOTTOM, world[position.bottom][position.column]))
+    }
+
+    private fun addBottomRightNeighbor(world: World, position: WorldPosition, neighbors: MutableSet<Neighbor>) {
+        neighbors.add(Neighbor(NeighborPosition.BOTTOM_RIGHT, world[position.bottom][position.right]))
     }
 }
 
-data class WorldPosition(val row: Int, val column: Int)
+data class WorldPosition(val row: Int, val column: Int) {
+    val top = row - 1
+    val bottom = row + 1
+    val left = column - 1
+    val right = column + 1
+}

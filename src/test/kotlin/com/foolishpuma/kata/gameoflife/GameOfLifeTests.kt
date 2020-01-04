@@ -8,27 +8,27 @@ class GameOfLifeTests {
     class RulesTests {
         @Test
         fun `live cell with less than 2 live neighbors, will die`() {
-            val cell = Cell(status = CellStatus.ALIVE)
-            val neighbors = Neighbors()
+            val cell = Cell(CellStatus.ALIVE)
+            val neighbors = setOf<Neighbor>()
 
             assertThat(cell.cellLives(neighbors)).isFalse()
         }
 
         @Test
         fun `live cell with 2 or 3 live neighbors, will live`() {
-            val cell = Cell(status = CellStatus.ALIVE)
+            val cell = Cell(CellStatus.ALIVE)
 
-            val twoLiveNeighbors = Neighbors(
-                    top = Cell(status = CellStatus.ALIVE),
-                    left = Cell(status = CellStatus.ALIVE)
+            val twoLiveNeighbors = setOf(
+                    Neighbor(NeighborPosition.LEFT, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.RIGHT,Cell(CellStatus.ALIVE))
             )
 
             assertThat(cell.cellLives(twoLiveNeighbors)).isTrue()
 
-            val threeLiveNeighbors = Neighbors(
-                    top = Cell(status = CellStatus.ALIVE),
-                    left = Cell(status = CellStatus.ALIVE),
-                    bottomRight = Cell(status = CellStatus.ALIVE)
+            val threeLiveNeighbors = setOf(
+                    Neighbor(NeighborPosition.TOP, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.LEFT, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.BOTTOM_RIGHT, Cell(CellStatus.ALIVE))
             )
 
             assertThat(cell.cellLives(threeLiveNeighbors)).isTrue()
@@ -36,13 +36,13 @@ class GameOfLifeTests {
 
         @Test
         fun `live cell with more than 3 live neighbors, will die`() {
-            val cell = Cell(status = CellStatus.ALIVE)
+            val cell = Cell(CellStatus.ALIVE)
 
-            val neighbors = Neighbors(
-                    top = Cell(status = CellStatus.ALIVE),
-                    topRight = Cell(status = CellStatus.ALIVE),
-                    left = Cell(status = CellStatus.ALIVE),
-                    bottomRight = Cell(status = CellStatus.ALIVE)
+            val neighbors = setOf(
+                    Neighbor(NeighborPosition.TOP, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.TOP_RIGHT, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.LEFT, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.BOTTOM_RIGHT, Cell(CellStatus.ALIVE))
             )
 
             assertThat(cell.cellLives(neighbors)).isFalse()
@@ -50,15 +50,15 @@ class GameOfLifeTests {
 
         @Test
         fun `dead cell with exactly 3 live neighbors, will resurrect`() {
-            val cell = Cell(status = CellStatus.DEAD)
+            val cell = Cell(CellStatus.DEAD)
 
-            val neighbors = Neighbors(
-                    top = Cell(status = CellStatus.ALIVE),
-                    left = Cell(status = CellStatus.ALIVE),
-                    bottomRight = Cell(status = CellStatus.ALIVE)
+            val threeLiveNeighbors = setOf(
+                    Neighbor(NeighborPosition.TOP, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.LEFT, Cell(CellStatus.ALIVE)),
+                    Neighbor(NeighborPosition.BOTTOM_RIGHT, Cell(CellStatus.ALIVE))
             )
 
-            assertThat(cell.cellLives(neighbors)).isTrue();
+            assertThat(cell.cellLives(threeLiveNeighbors)).isTrue();
         }
     }
 
@@ -68,23 +68,18 @@ class GameOfLifeTests {
         fun doSomething() {
 
             val seedWorld =
-                    arrayOf(arrayOf(liveCell(), deadCell()),
-                            arrayOf(deadCell(), liveCell()))
+                    arrayOf(arrayOf(liveCell(), deadCell(), liveCell()),
+                            arrayOf(deadCell(), liveCell(), deadCell()))
 
-            val warden = GameWarden(1, seedWorld)
+            val warden = GameWarden(seedWorld)
 
-            val world = warden.simulate()
-            for (rowIndex in world.indices) {
-                for (columnIndex in world[rowIndex].indices) {
-                    println("[${rowIndex}][${columnIndex}][${world[rowIndex][columnIndex]}")
-                }
-            }
+            val newWorld = warden.simulate()
 
             val expectedWorld =
-                    arrayOf(arrayOf(deadCell(), deadCell()),
-                            arrayOf(deadCell(), liveCell()))
+                    arrayOf(arrayOf(deadCell(), liveCell(), deadCell()),
+                            arrayOf(deadCell(), liveCell(), deadCell()))
+
+            assertThat(newWorld).isEqualTo(expectedWorld)
         }
     }
-
-
 }

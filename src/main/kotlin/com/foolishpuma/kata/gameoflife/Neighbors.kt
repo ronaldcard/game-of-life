@@ -1,16 +1,20 @@
 package com.foolishpuma.kata.gameoflife
 
-data class Neighbors(
-        var topLeft: Cell? = null,
-        var top: Cell? = null,
-        var topRight: Cell? = null,
-        var left: Cell? = null,
-        var right: Cell? = null,
-        var bottomLeft: Cell? = null,
-        var bottom: Cell? = null,
-        var bottomRight: Cell? = null
-) {
-    private val list = listOf(topLeft, top, topRight, left, right, bottomLeft, bottom, bottomRight)
+typealias Neighbors = Set<Neighbor>
 
-    fun liveCount() = list.count{ it?.status == CellStatus.ALIVE }
+data class Neighbor(
+        val position: NeighborPosition,
+        val cell: Cell)
+
+enum class NeighborPosition {
+    TOP_LEFT,
+    TOP,
+    TOP_RIGHT,
+    LEFT,
+    RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM,
+    BOTTOM_RIGHT
 }
+
+fun Neighbors.liveCount() = this.filter { it.cell.status == CellStatus.ALIVE }.count()
